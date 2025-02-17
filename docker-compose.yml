@@ -1,0 +1,13 @@
+services:
+  # React Frontend Service
+  simple-commerce-frontend-npm:
+    build:
+      context: .  # the directory where the Dockerfile is located
+    ports:
+      - "80:80"  # Expose port 80 in the container to port 4000 on the host
+    volumes:
+      - .:/app  # Mount the local directory into the container for development (optional for live code editing)
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # Useful for hot-reloading in some environments
+      - BACKEND_API_URL= http://localhost:3000/ 
+    
