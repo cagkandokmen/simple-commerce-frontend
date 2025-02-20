@@ -7,8 +7,19 @@ interface ApiResponse<T> {
 
 async function get<T>(urlPath: string): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(`${API_URL}${urlPath}`);
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    const token = localStorage.getItem('token'); 
+    const response = await fetch(`${API_URL}${urlPath}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if(response.status >= 400 && response.status < 500){
+      const data = await response.json();
+      throw new Error(`${data.message}`);
+    }
+    if (!response.ok) throw new Error(`Unexcepted Error...`);
     const data = await response.json();
     return { data, error: null };
   } catch (error: any) {
@@ -18,11 +29,19 @@ async function get<T>(urlPath: string): Promise<ApiResponse<T>> {
 
 async function post<T>(urlPath: string, body?: any): Promise<ApiResponse<T>> {
   try {
+    const token = localStorage.getItem('token'); 
     const response = await fetch(`${API_URL}${urlPath}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' 
+      },
       body: JSON.stringify(body),
     });
+    if(response.status >= 400 && response.status < 500){
+      const data = await response.json();
+      throw new Error(`${data.message}`);
+    }
     if (!response.ok) throw new Error(`Error: ${response.status}`);
     const data = await response.json();
     return { data, error: null };
@@ -33,10 +52,15 @@ async function post<T>(urlPath: string, body?: any): Promise<ApiResponse<T>> {
 
 async function del<T>(urlPath: string): Promise<ApiResponse<T>> {
   try {
+    const token = localStorage.getItem('token'); 
     const response = await fetch(`${API_URL}${urlPath}`, {
       method: 'DELETE',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' 
+      },
     });
-    if(response.status == 400){
+    if(response.status >= 400 && response.status < 500){
       const data = await response.json();
       throw new Error(`${data.message}`);
     }

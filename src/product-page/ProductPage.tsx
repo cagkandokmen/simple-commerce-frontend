@@ -14,7 +14,7 @@ const ProductPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>();
-  const { username } = useProfile();
+  const { user } = useProfile();
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -27,7 +27,7 @@ const ProductPage: React.FC = () => {
   };
   useEffect(() => {
     fetchProducts();
-    if(username == 'admin')
+    if(user?.role == 'admin')
       setIsAdmin(true);
     else
       setIsAdmin(false);
@@ -43,7 +43,7 @@ const ProductPage: React.FC = () => {
       const basketProduct ={
         productId:selectedProduct.id
       };
-      const { error } = await api.post('basket/'+username, basketProduct);
+      const { error } = await api.post('basket/', basketProduct);
       if (error) 
         setError(error);
       

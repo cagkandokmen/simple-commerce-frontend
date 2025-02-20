@@ -3,17 +3,33 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Card } from 'react-bootstrap';
 import { useProfile } from '../context/ProfileContext.tsx';
+import { api } from '../fetch/fetchApi.ts';
+import { jwtDecode } from "jwt-decode"; 
+import { User } from '../context/User.ts';
 
 const LoginPage: React.FC = () => {
   const [usernameInput, setUsernameInput] = React.useState('');
   const [passwordInput, setPasswordInput] = React.useState('');
-  const { setUsername } = useProfile();
+  const { setUser } = useProfile();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setUsername(usernameInput || 'Guest');
-    navigate('/main'); 
+    const { data, error } = await api.post('auth/login',
+      {
+        username: usernameInput,
+        password: passwordInput
+      }
+    );
+    if(error){
+      alert(error);
+    }else{
+      const { access_token } = data as any;
+      localStorage.setItem('token', access_token);
+      const decoded = jwtDecode(access_token);
+      setUser(decoded as User);
+      navigate('/main'); 
+    }
   };
 
   const handleRegister = () => {

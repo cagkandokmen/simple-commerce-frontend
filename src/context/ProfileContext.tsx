@@ -1,19 +1,18 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { User } from './User.ts';
 
-interface ProfileContextType {
-  username: string;
-  setUsername: (name: string) => void;
-}
+type UserContextType = {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+};
 
-const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
+const ProfileContext = createContext<UserContextType | null>(null);
 
-export const ProfileProvider = ({ children }: { children: ReactNode }) => {
-  const [username, setUsername] = useState('Guest');
+export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
   return (
-    <ProfileContext.Provider value={{ 
-            username, 
-            setUsername }}>
+    <ProfileContext.Provider value={{ user, setUser }}>
       {children}
     </ProfileContext.Provider>
   );
@@ -22,7 +21,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 export const useProfile = () => {
   const context = useContext(ProfileContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useProfile must be used within a ProfileProvider");
   }
   return context;
 };

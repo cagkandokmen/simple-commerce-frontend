@@ -1,20 +1,33 @@
 import React from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
+import { api } from '../fetch/fetchApi.ts';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
   const [username, setUsername] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [surname, setSurname] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [rePassword, setRePassword] = React.useState('');
+  const [role, setRole] = React.useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== rePassword) {
       alert('Passwords do not match!');
       return;
     }
-    alert(`User ${username} registered successfully!`);
+    const { error} = await api.post('auth/register',
+          {
+            username: username,
+            password: password,
+            role: role
+          }
+    );
+    if(error){
+      alert(error);
+    }
+    else
+      navigate("/");
   };
 
   return (
@@ -30,26 +43,6 @@ const RegisterPage: React.FC = () => {
                 placeholder="Enter username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formName">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formSurname">
-              <Form.Label>Surname</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter surname"
-                value={surname}
-                onChange={(e) => setSurname(e.target.value)}
                 required
               />
             </Form.Group>
@@ -70,6 +63,16 @@ const RegisterPage: React.FC = () => {
                 placeholder="Re-enter password"
                 value={rePassword}
                 onChange={(e) => setRePassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formRole">
+              <Form.Label>Role</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
                 required
               />
             </Form.Group>

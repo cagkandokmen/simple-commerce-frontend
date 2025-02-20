@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ListGroup, Button, Table } from 'react-bootstrap';
 import { api } from '../fetch/fetchApi.ts';
-import { useProfile } from '../context/ProfileContext.tsx';
 import Product from '../product-page/ProductType.ts';
 
 interface Basket{
@@ -14,11 +13,10 @@ const Basket: React.FC = () => {
   const [ basket, setBasket ] = useState<Basket[]>();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { username } = useProfile();
 
 const fetchBasket = async () => {
     setLoading(true);
-    const { data, error } = await api.get<Basket[]>('basket/'+username);
+    const { data, error } = await api.get<Basket[]>('basket');
     if (error) 
       setError(error);
     else 
@@ -30,7 +28,7 @@ const fetchBasket = async () => {
   }, []);
 
   const removeFromBasket = async (id : number) => {
-    const { error } = await api.del('basket/'+username+'/'+id);
+    const { error } = await api.del('basket/'+id);
     if (error) 
       setError(error);
     else{
