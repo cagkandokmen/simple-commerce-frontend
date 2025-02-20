@@ -6,7 +6,7 @@ import Product from '../product-page/ProductType.ts';
 interface Basket{
   id:number;
   name:string;
-  productid:string;
+  productId:string;
   product:Product;
 }
 const Basket: React.FC = () => {
